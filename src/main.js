@@ -12,20 +12,15 @@ function Equation(props) {
 class Puzzle extends React.Component{
     constructor(props) {
         super(props);
-        this.state = {  a: 0,
-                        b: 0,
-                        sign: '+',
+        this.state = {  a: props.a,
+                        b: props.b,
+                        sign: props.sign,
                         answer: '', 
                         solved: false };
-
-        this.genRandDigit = this.genRandDigit.bind(this);
-        this.genRandPuzzle = this.genRandPuzzle.bind(this);                
+                
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.assert = this.assert.bind(this);
-        this.add = this.add.bind(this);
-        this.subtractNoJump = this.subtractNoJump.bind(this);
-        this.subtractWithJump = this.subtractWithJump.bind(this);
     }
 
     componentDidMount() {
@@ -66,20 +61,65 @@ class Puzzle extends React.Component{
         else
             return (Number(state.answer) == state.a - state.b);
     }
+}
 
-    genRandDigit(start = 1, end = 9) {
-        //data correction
-        start = (start < 0) ? 0 : start;
-        end = (end < start) ? start : end;
-        
-        //ceil here is used for equal chance at getting any number inbetween
-        let modifier = Math.ceil(Math.random() * (end - start + 1)); // [1; end - start + 1]
-        return start + modifier - 1; //[start; end]
+function Navigation(props) {
+    return <button onSubmit={PuzzleGen(props.updater()).genRandPuzzle()}>Go to next puzzle</button>;    
+} 
+
+class Game extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            a: 0,
+            b: 0,
+            sign: '+'
+        }
+    }
+
+    genPuzzle(params) {
+        this.setState(({
+            a: params.aUnit + params.aDozen,
+            b: params.bUnit + params.bDozen,
+            sign: params.sign
+        }));
+    }
+
+    render() {
+
+        return (
+            <div className="game">
+                <Header />
+                <Puzzle state={this.state}/>
+                <Navigation updater={this.genPuzzle}/>
+            </div>
+        );
+    }
+}
+
+function genRandDigit(start = 1, end = 9) {
+    //data correction
+    start = (start < 0) ? 0 : start;
+    end = (end < start) ? start : end;
+    
+    //ceil here is used for equal chance at getting any number inbetween
+    let modifier = Math.ceil(Math.random() * (end - start + 1)); // [1; end - start + 1]
+    return start + modifier - 1; //[start; end]
+}
+
+class PuzzleGen {
+    constructor(props) {
+        this.genRandPuzzle = this.genRandPuzzle.bind(this);
+        this.add = this.add.bind(this);
+        this.subtractNoJump = this.subtractNoJump.bind(this);
+        this.subtractWithJump = this.subtractWithJump.bind(this);
+        this.updater = props.updater;
     }
 
     genRandPuzzle() {
         let puzzle;
-        switch(this.genRandDigit(1, 3)) {
+        switch(genRandDigit(1, 3)) {
             case 1:
                 puzzle = this.add;
                 break;
@@ -93,60 +133,48 @@ class Puzzle extends React.Component{
                 puzzle = this.add;
                 break;
         }
-        puzzle();
-        return;
+        return puzzle(updater);
     }
 
-    add() {
-        let aUnit, bUnit, aDozen, bDozen, answer;
-        aUnit = this.genRandDigit();
-        aDozen = this.genRandDigit(1, 7);
-        bUnit = this.genRandDigit(10 - aUnit, 9);
-        bDozen = 10 * this.genRandDigit(1, 8 - aDozen);
-        aDozen = 10 * aDozen;
-
-        this.setState(state => ({
-            a: aUnit + aDozen,
-            b: bUnit + bDozen,
+    add(updater) {
+        let params = {
+            aUnit: genRandDigit(), 
+            bUnit: 0, 
+            aDozen: genRandDigit(1, 7), 
+            bDozen: 0,
             sign: '+'
-        }));
+        }
+        params.bUnit = genRandDigit(10 - params.aUnit, 9);
+        params.bDozen = 10 * genRandDigit(1, 8 - params.aDozen);
+        params.aDozen = 10 * params.aDozen;
+
+        updater(params);
     }
 
-    subtractNoJump() {
-        let aUnit, bUnit, aDozen, answer;
-        aUnit = this.genRandDigit(0, 9);
-        aDozen = 10 * this.genRandDigit(1, 9);
-        bUnit = this.genRandDigit(0, aUnit);
-
-        this.setState(state => ({
-            a: aUnit + aDozen,
-            b: bUnit,
+    subtractNoJump(updater) {
+        let params = {
+            aUnit: genRandDigit(0, 9), 
+            bUnit: 0, 
+            aDozen: 10 * genRandDigit(1, 9), 
+            bDozen: 0,
             sign: '-'
-        }));
+        }
+        bUnit = genRandDigit(0, params.aUnit);
+
+        updater(params);
     }
 
-    subtractWithJump() {
-        let aUnit, bUnit, aDozen, answer;
-        aUnit = this.genRandDigit(0, 8);
-        aDozen = 10 * this.genRandDigit(1, 9);
-        bUnit = this.genRandDigit(aUnit + 1, 9);
-
-        this.setState(state => ({
-            a: aUnit + aDozen,
-            b: bUnit,
+    subtractWithJump(updater) {
+        let params = {
+            aUnit: genRandDigit(0, 8), 
+            bUnit: 0, 
+            aDozen: 10 * genRandDigit(1, 9), 
+            bDozen: 0,
             sign: '-'
-        }));
-    }
-}
+        }
+        bUnit = genRandDigit(params.aUnit + 1, 9);
 
-class Game extends React.Component {
-    render() {
-        return (
-            <div className="game">
-                <Header />
-                <Puzzle />
-            </div>
-        );
+        updater(params);
     }
 }
 
