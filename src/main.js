@@ -15,10 +15,16 @@ class Navigation extends React.Component {
 
         this.updater = props.updater;
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.testFuncNav = this.testFuncNav.bind(this);
     }
 
-    handleSubmit(e) {        
-        genRandPuzzle(this.updater);
+    testFuncNav() {
+        console.log("Hi, Navigation!");
+    }
+
+    handleSubmit(e) {  
+        genRandPuzzle(this.testFuncNav);    
+        //genRandPuzzle(this.updater);
         e.preventDefault();
     }
 
@@ -89,6 +95,12 @@ class Game extends React.Component {
             b: 0,
             sign: '+'
         }
+        this.testFuncGame = this.testFuncGame.bind(this);
+        this.setPuzzle = this.setPuzzle.bind(this);
+    }
+    
+    testFuncGame() {
+        console.log("Hi, Game!");
     }
 
     setPuzzle = params => { 
@@ -105,7 +117,7 @@ class Game extends React.Component {
             <div className="game">
                 <Header />
                 <Puzzle state={this.state}/>
-                <Navigation updater={this.setPuzzle}/>
+                <Navigation updater={this.testFuncGame}/>
             </div>
         );
     }
