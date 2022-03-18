@@ -9,12 +9,26 @@ function Equation(props) {
     return <h2>{props.a} {props.sign} {props.b} = </h2>;
 }
 
-function Navigation(props) {
-    return (
-        <form onSubmit={genRandPuzzle(props.updater)}>
-            <button>Go to next puzzle</button>
-        </form>
-    );
+class Navigation extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.updater = props.updater;
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleSubmit(e) {        
+        genRandPuzzle(this.updater);
+        e.preventDefault();
+    }
+
+    render () {
+        return (
+            <form onSubmit={this.handleSubmit}>
+                <button>Go to next puzzle</button>
+            </form>
+        );
+    }
 } 
 
 class Puzzle extends React.Component{
