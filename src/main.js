@@ -139,8 +139,8 @@ function add(updater) {
     params.bDozen = 10 * genRandDigit(1, 8 - params.aDozen);
     params.aDozen = 10 * params.aDozen;
     
-    React.useCallback(() => {updater(params)}, [params]);
-    return true;
+    updater(params);
+    return;
 }
 
 function subtractNoJump(updater) {
@@ -153,8 +153,8 @@ function subtractNoJump(updater) {
     }
     params.bUnit = genRandDigit(0, params.aUnit);
 
-    React.useCallback(() => {updater(params)}, [params]);
-    return true;
+    updater(params);
+    return;
 }
 
 function subtractWithJump(updater) {
@@ -167,8 +167,8 @@ function subtractWithJump(updater) {
     }
     params.bUnit = genRandDigit(params.aUnit + 1, 9);
 
-    React.useCallback(() => {updater(params)}, [params]);
-    return true;
+    updater(params);
+    return;
 }
 
 
