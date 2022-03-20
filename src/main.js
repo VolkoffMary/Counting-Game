@@ -38,7 +38,8 @@ class Puzzle extends React.Component{
     }
 
     componentDidMount() {
-        genRandPuzzle(this.setPuzzle);
+        let puzzle = new RandPuzzle();
+        puzzle.genRandPuzzle(this.setPuzzle);
     }
 
     newPuzzle() {
@@ -46,7 +47,8 @@ class Puzzle extends React.Component{
             solved: undefined,
             answer: ''
         });
-        genRandPuzzle(this.setPuzzle);
+        let puzzle = new RandPuzzle();
+        puzzle.genRandPuzzle(this.setPuzzle);
     }
 
     setPuzzle(params) { 
@@ -119,68 +121,79 @@ function genRandDigit(start = 1, end = 9) {
     return start + modifier - 1; //[start; end]
 }
 
-function genRandPuzzle(updater) {
-    let puzzle;
-    switch(genRandDigit(1, 3)) {
-        case 1:
-            puzzle = add;
-            break;
-        case 2:
-            puzzle = subtractNoJump;
-            break;
-        case 3:
-            puzzle = subtractWithJump;
-            break;
-        default:
-            puzzle = add;
-            break;
-    }
-    puzzle(updater);
-    return;
-}
+class RandPuzzle {
 
-function add(updater) {
-    let params = {
-        aUnit: genRandDigit(), 
-        bUnit: 0, 
-        aDozen: genRandDigit(1, 7), 
-        bDozen: 0,
-        sign: '+'
+    constructor() {
+        this.genRandPuzzle = this.genRandPuzzle.bind(this);
+        this.add = this.add.bind(this);
+        this.subtractNoJump = this.subtractNoJump.bind(this);
+        this.subtractWithJump = this.subtractWithJump.bind(this);
     }
-    params.bUnit = genRandDigit(10 - params.aUnit, 9);
-    params.bDozen = 10 * genRandDigit(1, 8 - params.aDozen);
-    params.aDozen = 10 * params.aDozen;
+  
+    genRandPuzzle(updater) {
+        let puzzle;
+        switch(genRandDigit(1, 3)) {
+            case 1:
+                puzzle = this.add;
+                break;
+            case 2:
+                puzzle = this.subtractNoJump;
+                break;
+            case 3:
+                puzzle = this.subtractWithJump;
+                break;
+            default:
+                puzzle = this.add;
+                break;
+        }
+        puzzle(updater);
+        return;
+    }
     
-    updater(params);
-    return;
-}
-
-function subtractNoJump(updater) {
-    let params = {
-        aUnit: genRandDigit(0, 9), 
-        bUnit: 0, 
-        aDozen: 10 * genRandDigit(1, 9), 
-        bDozen: 0,
-        sign: '-'
+    add(updater) {
+        let params = {
+            aUnit: genRandDigit(), 
+            bUnit: 0, 
+            aDozen: genRandDigit(1, 7), 
+            bDozen: 0,
+            sign: '+'
+        }
+        params.bUnit = genRandDigit(10 - params.aUnit, 9);
+        params.bDozen = 10 * genRandDigit(1, 8 - params.aDozen);
+        params.aDozen = 10 * params.aDozen;
+        
+        updater(params);
+        return;
     }
-    params.bUnit = genRandDigit(0, params.aUnit);
-
-    updater(params);
-    return;
-}
-
-function subtractWithJump(updater) {
-    let params = {
-        aUnit: genRandDigit(0, 8), 
-        bUnit: 0, 
-        aDozen: 10 * genRandDigit(1, 9), 
-        bDozen: 0,
-        sign: '-'
+    
+    subtractNoJump(updater) {
+        let params = {
+            aUnit: genRandDigit(0, 9), 
+            bUnit: 0, 
+            aDozen: 10 * genRandDigit(1, 9), 
+            bDozen: 0,
+            sign: '-'
+        }
+        params.bUnit = genRandDigit(0, params.aUnit);
+    
+        updater(params);
+        return;
     }
-    params.bUnit = genRandDigit(params.aUnit + 1, 9);
-
-    updater(params);
-    return;
+    
+    subtractWithJump(updater) {
+        let params = {
+            aUnit: genRandDigit(0, 8), 
+            bUnit: 0, 
+            aDozen: 10 * genRandDigit(1, 9), 
+            bDozen: 0,
+            sign: '-'
+        }
+        params.bUnit = genRandDigit(params.aUnit + 1, 9);
+    
+        updater(params);
+        return;
+    }
+  
 }
 
 ReactDOM.render(
