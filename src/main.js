@@ -193,7 +193,6 @@ class RandPuzzle {
         updater(params);
         return;
     }
-  
 }
 
 ReactDOM.render(
