@@ -23,7 +23,7 @@ else
 }
 
 const Puzzle = () => {
-  const [answer, setAnswer] = useState('');
+  const [answer, setAnswer] = useState("");
   const [puzzle, setPuzzle] = useState(genRandPuzzle())
   const [solved, setSolved] = useState(undefined);
 
@@ -31,9 +31,9 @@ const Puzzle = () => {
           <View>
             <Equation a={puzzle.a} b={puzzle.b} sign={puzzle.sign}/>
             <TextInput id="answer" onChangeText={newText => setAnswer(newText)} defaultValue={answer} readOnly={solved === true}/>
-            <Button onPress={() => setSolved(assert(puzzle, answer))}>Check</Button>
+            <Button onPress={() => setSolved(assert(puzzle, answer))} title={"Check"}/>
             <Result msgFlag={solved}/>
-            <Button onPress={() => {setPuzzle(genRandPuzzle()), setSolved(undefined), setAnswer('asdf')}}>Go to next puzzle</Button>
+            <Button onPress={() => {setPuzzle(genRandPuzzle()), setSolved(undefined), setAnswer("")}} title={"Go to next puzzle"}/>
           </View>
   );
 };
